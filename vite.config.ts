@@ -9,6 +9,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
+    // Relative base: the SPA works both at the domain root
+    // (user site) and under /solar-system-explorer/ (project site).
+    base: './',
     plugins: [react()],
     server: {
       proxy: {
