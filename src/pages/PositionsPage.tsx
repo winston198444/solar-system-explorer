@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api, type PositionQuery } from '../lib/api';
+import { useI18n } from '../i18n';
 import Skeleton from '../components/Skeleton';
 import ErrorState from '../components/States';
 import { formatNumber } from '../lib/format';
@@ -16,6 +17,7 @@ function toApiDatetime(localValue: string): string {
 }
 
 export default function PositionsPage() {
+  const { t } = useI18n();
   const [lat, setLat] = useState('40.4168');
   const [lon, setLon] = useState('-3.7038');
   const [elev, setElev] = useState('650');
@@ -37,21 +39,21 @@ export default function PositionsPage() {
     const latN = Number(lat);
     const lonN = Number(lon);
     if (Number.isNaN(latN) || latN < -90 || latN > 90) {
-      list.push('Latitude must be between -90 and 90.');
+      list.push(t('positions.errLat'));
     }
     if (Number.isNaN(lonN) || lonN < -180 || lonN > 180) {
-      list.push('Longitude must be between -180 and 180.');
+      list.push(t('positions.errLon'));
     }
-    if (Number.isNaN(Number(elev))) list.push('Elevation must be a number.');
-    if (!datetime) list.push('Pick a date and time.');
-    if (Number.isNaN(Number(zone))) list.push('Time zone must be a number.');
+    if (Number.isNaN(Number(elev))) list.push(t('positions.errElev'));
+    if (!datetime) list.push(t('positions.errDatetime'));
+    if (Number.isNaN(Number(zone))) list.push(t('positions.errZone'));
     return list;
-  }, [lat, lon, elev, datetime, zone]);
+  }, [lat, lon, elev, datetime, zone, t]);
 
   function locate() {
     setLocateError(null);
     if (!navigator.geolocation) {
-      setLocateError('Geolocation is not available in this browser.');
+      setLocateError(t('positions.errGeolocationUnsupported'));
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -62,7 +64,7 @@ export default function PositionsPage() {
           setElev(String(Math.round(pos.coords.altitude)));
         }
       },
-      () => setLocateError('Could not get your location.'),
+      () => setLocateError(t('positions.errGeolocation')),
     );
   }
 
@@ -74,12 +76,8 @@ export default function PositionsPage() {
   return (
     <div className="page">
       <header className="page-header">
-        <h1>Sky positions</h1>
-        <p>
-          Where the Sun, the Moon, the planets and Pluto are in the sky
-          right now — equatorial (RA/Dec) and horizontal (Az/Alt)
-          coordinates for any observer.
-        </p>
+        <h1>{t('positions.title')}</h1>
+        <p>{t('positions.subtitle')}</p>
       </header>
 
       <form
@@ -98,7 +96,7 @@ export default function PositionsPage() {
         }}
       >
         <label className="toolbar-field">
-          <span>Latitude</span>
+          <span>{t('positions.lat')}</span>
           <input
             type="number"
             step="any"
@@ -109,7 +107,7 @@ export default function PositionsPage() {
           />
         </label>
         <label className="toolbar-field">
-          <span>Longitude</span>
+          <span>{t('positions.lon')}</span>
           <input
             type="number"
             step="any"
@@ -120,7 +118,7 @@ export default function PositionsPage() {
           />
         </label>
         <label className="toolbar-field">
-          <span>Elevation (m)</span>
+          <span>{t('positions.elev')}</span>
           <input
             type="number"
             step="any"
@@ -129,7 +127,7 @@ export default function PositionsPage() {
           />
         </label>
         <label className="toolbar-field">
-          <span>Date &amp; time</span>
+          <span>{t('positions.datetime')}</span>
           <input
             type="datetime-local"
             value={datetime}
@@ -137,7 +135,7 @@ export default function PositionsPage() {
           />
         </label>
         <label className="toolbar-field">
-          <span>UTC offset</span>
+          <span>{t('positions.zone')}</span>
           <input
             type="number"
             step="any"
@@ -145,18 +143,18 @@ export default function PositionsPage() {
             max="14"
             value={zone}
             onChange={(e) => setZone(e.target.value)}
-            title="Time zone offset from UTC, e.g. 2 for CEST"
+            title={t('positions.zoneTitle')}
           />
         </label>
         <div className="toolbar-actions">
           <button type="submit" className="btn" disabled={errors.length > 0}>
-            Calculate
+            {t('positions.calculate')}
           </button>
           <button type="button" className="btn btn-secondary" onClick={locate}>
-            Use my location
+            {t('positions.useMyLocation')}
           </button>
           <button type="button" className="btn btn-secondary" onClick={useNow}>
-            Now
+            {t('positions.now')}
           </button>
         </div>
         {errors.length > 0 && (
@@ -176,18 +174,20 @@ export default function PositionsPage() {
         <>
           <section aria-labelledby="positions-heading">
             <h2 id="positions-heading">
-              Positions for {data.location.latitude.toFixed(2)}°,{' '}
-              {data.location.longitude.toFixed(2)}°
+              {t('positions.resultsFor', {
+                lat: data.location.latitude.toFixed(2),
+                lon: data.location.longitude.toFixed(2),
+              })}
             </h2>
             <div className="table-scroll">
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th scope="col">Object</th>
-                    <th scope="col">Right ascension</th>
-                    <th scope="col">Declination</th>
-                    <th scope="col">Azimuth</th>
-                    <th scope="col">Altitude</th>
+                    <th scope="col">{t('positions.col.object')}</th>
+                    <th scope="col">{t('positions.col.ra')}</th>
+                    <th scope="col">{t('positions.col.dec')}</th>
+                    <th scope="col">{t('positions.col.az')}</th>
+                    <th scope="col">{t('positions.col.alt')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -203,40 +203,38 @@ export default function PositionsPage() {
                 </tbody>
               </table>
             </div>
-            <p className="panel-note">
-              Negative altitude means the object is below the horizon.
-            </p>
+            <p className="panel-note">{t('positions.belowHorizon')}</p>
           </section>
 
           <section aria-labelledby="time-heading">
-            <h2 id="time-heading">Time &amp; reference frames</h2>
+            <h2 id="time-heading">{t('positions.timeHeading')}</h2>
             <dl className="field-list">
               <div className="field">
-                <dt>Calculated for (UTC)</dt>
+                <dt>{t('positions.calculatedFor')}</dt>
                 <dd>{data.time_info.calculated_for_utc}</dd>
               </div>
               <div className="field">
-                <dt>Local time</dt>
+                <dt>{t('positions.localTime')}</dt>
                 <dd>{data.time_info.local_time_display}</dd>
               </div>
               <div className="field">
-                <dt>Universal time</dt>
+                <dt>{t('positions.universalTime')}</dt>
                 <dd>{data.time_info.universal_time_ut}</dd>
               </div>
               <div className="field">
-                <dt>Julian day</dt>
+                <dt>{t('positions.julianDay')}</dt>
                 <dd>{formatNumber(data.time_info.julian_day, 4)}</dd>
               </div>
               <div className="field">
-                <dt>J2000 day number</dt>
+                <dt>{t('positions.j2000')}</dt>
                 <dd>{formatNumber(data.time_info.day_number_j2000, 2)}</dd>
               </div>
               <div className="field">
-                <dt>Greenwich sidereal time</dt>
+                <dt>{t('positions.gst')}</dt>
                 <dd>{data.time_info.greenwich_sidereal_time}</dd>
               </div>
               <div className="field">
-                <dt>Local sidereal time</dt>
+                <dt>{t('positions.lst')}</dt>
                 <dd>{data.time_info.local_sidereal_time}</dd>
               </div>
             </dl>

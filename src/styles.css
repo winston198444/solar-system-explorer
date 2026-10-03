@@ -68,6 +68,18 @@
   top: 8px;
 }
 
+/* ---------- Language switcher ---------- */
+
+.lang-switch select {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
 body {
   margin: 0;
   background:
@@ -349,13 +361,6 @@ h2 {
   margin-top: 8px;
 }
 
-.body-card-native {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  margin: 4px 0 0;
-  min-height: 1em;
-}
-
 /* ---------- Badges ---------- */
 
 .badge {
@@ -522,12 +527,6 @@ h2 {
   text-decoration: underline;
 }
 
-.cell-sub {
-  display: block;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-}
-
 .th-sort {
   background: none;
   border: none;
@@ -592,11 +591,6 @@ h2 {
 .detail-header h1 {
   margin: 0;
   font-size: 2rem;
-}
-
-.detail-native {
-  color: var(--text-dim);
-  margin: 2px 0 0;
 }
 
 .detail-alt {

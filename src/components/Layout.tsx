@@ -1,16 +1,23 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import {
+  SUPPORTED_LANGS,
+  useI18n,
+  type Lang,
+} from '../i18n';
 
 const NAV = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/catalog', label: 'Catalog' },
-  { to: '/positions', label: 'Sky positions' },
-];
+  { to: '/', labelKey: 'nav.dashboard' },
+  { to: '/catalog', labelKey: 'nav.catalog' },
+  { to: '/positions', labelKey: 'nav.positions' },
+] as const;
 
 export default function Layout() {
+  const { lang, setLang, t } = useI18n();
+
   return (
     <div className="app">
       <a className="skip-link" href="#main-content">
-        Skip to content
+        {t('layout.skip')}
       </a>
       <header className="app-header">
         <div className="app-header-inner">
@@ -18,7 +25,7 @@ export default function Layout() {
             <span className="brand-icon" aria-hidden="true">🪐</span>
             <span>
               <strong>Solar System Explorer</strong>
-              <small>Powered by Solar System openData API</small>
+              <small>{t('layout.tagline')}</small>
             </span>
           </NavLink>
           <nav className="main-nav" aria-label="Main">
@@ -31,10 +38,24 @@ export default function Layout() {
                   `nav-link${isActive ? ' nav-link-active' : ''}`
                 }
               >
-                {item.label}
+                {t(item.labelKey)}
               </NavLink>
             ))}
           </nav>
+          <label className="lang-switch">
+            <span className="sr-only">{t('lang.label')}</span>
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value as Lang)}
+              aria-label={t('lang.label')}
+            >
+              {SUPPORTED_LANGS.map(({ code, label }) => (
+                <option key={code} value={code}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </header>
       <main className="app-main" id="main-content">
@@ -42,15 +63,15 @@ export default function Layout() {
       </main>
       <footer className="app-footer">
         <p className="footer-note">
-          Data from the{' '}
+          {t('footer.dataFrom')}{' '}
           <a
             href="https://api.le-systeme-solaire.net"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Solar System openData API
+            {t('footer.apiName')}
           </a>{' '}
-          (api.le-systeme-solaire.net)
+          {t('footer.apiDomain')}
         </p>
       </footer>
     </div>

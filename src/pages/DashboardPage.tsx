@@ -3,24 +3,25 @@ import { Link } from 'react-router-dom';
 import { api, fetchAllBodies } from '../lib/api';
 import { BODY_TYPES, type BodyType } from '../lib/model';
 import { formatNumber } from '../lib/format';
+import { useI18n, type DictKey } from '../i18n';
 import StatCard from '../components/StatCard';
 import Skeleton from '../components/Skeleton';
 import ErrorState from '../components/States';
 import BodyCard from '../components/BodyCard';
 import { typeClass } from '../components/Badge';
 
-const KNOWN_COUNT_LABELS: Record<string, string> = {
-  planet: 'Planets',
-  dwarfPlanet: 'Dwarf planets',
-  asteroid: 'Asteroids',
-  comet: 'Comets',
-  moonsPlanet: 'Moons of planets',
-  moonsDwarfPlanet: 'Moons of dwarf planets',
-  moonsAsteroid: 'Moons of asteroids',
-  moonsJupiter: "Jupiter's moons",
-  moonsSaturn: "Saturn's moons",
-  moonsUranus: "Uranus' moons",
-  moonsNeptune: "Neptune's moons",
+const KNOWN_COUNT_LABELS: Record<string, DictKey> = {
+  planet: 'stat.planet',
+  dwarfPlanet: 'stat.dwarfPlanet',
+  asteroid: 'stat.asteroid',
+  comet: 'stat.comet',
+  moonsPlanet: 'stat.moonsPlanet',
+  moonsDwarfPlanet: 'stat.moonsDwarfPlanet',
+  moonsAsteroid: 'stat.moonsAsteroid',
+  moonsJupiter: 'stat.moonsJupiter',
+  moonsSaturn: 'stat.moonsSaturn',
+  moonsUranus: 'stat.moonsUranus',
+  moonsNeptune: 'stat.moonsNeptune',
 };
 
 const TYPE_ICONS: Record<BodyType, string> = {
@@ -44,6 +45,7 @@ const PLANET_ORDER = [
 ];
 
 export default function DashboardPage() {
+  const { t, typeLabel } = useI18n();
   const counts = useQuery({
     queryKey: ['knowncount'],
     queryFn: api.knownCount,
@@ -72,14 +74,11 @@ export default function DashboardPage() {
   return (
     <div className="page">
       <section className="hero">
-        <h1>Explore the Solar System</h1>
-        <p>
-          Planets, dwarf planets, moons, asteroids and comets — every object
-          catalogued by the Solar System openData API.
-        </p>
+        <h1>{t('dashboard.title')}</h1>
+        <p>{t('dashboard.subtitle')}</p>
         {bodies.data ? (
           <p className="hero-total">
-            <strong>{formatNumber(all.length)}</strong> objects in this catalog
+            <strong>{formatNumber(all.length)}</strong> {t('dashboard.total')}
           </p>
         ) : null}
       </section>
@@ -89,7 +88,7 @@ export default function DashboardPage() {
 
       {counts.data && (
         <section aria-labelledby="known-heading">
-          <h2 id="known-heading">Official totals for the whole Solar System</h2>
+          <h2 id="known-heading">{t('dashboard.officialTotals')}</h2>
           <div className="stat-grid">
             {counts.data.knowncount
               .filter((item) => KNOWN_COUNT_LABELS[item.id])
@@ -97,7 +96,7 @@ export default function DashboardPage() {
               .map((item) => (
                 <StatCard
                   key={item.id}
-                  label={KNOWN_COUNT_LABELS[item.id]}
+                  label={t(KNOWN_COUNT_LABELS[item.id])}
                   value={formatNumber(item.knownCount)}
                   sub={item.updateDate}
                 />
@@ -108,9 +107,9 @@ export default function DashboardPage() {
 
       {all.length > 0 && (
         <section aria-labelledby="types-heading">
-          <h2 id="types-heading">Detailed records in this catalog</h2>
+          <h2 id="types-heading">{t('dashboard.catalogTotals')}</h2>
           <div className="type-grid">
-            {BODY_TYPES.filter((t) => byType.has(t)).map((type) => (
+            {BODY_TYPES.filter((t2) => byType.has(t2)).map((type) => (
               <Link
                 key={type}
                 to={`/catalog?type=${encodeURIComponent(type)}`}
@@ -119,7 +118,7 @@ export default function DashboardPage() {
                 <span className="type-icon" aria-hidden="true">
                   {TYPE_ICONS[type]}
                 </span>
-                <span className="type-name">{type}s</span>
+                <span className="type-name">{typeLabel(type, true)}</span>
                 <span className="type-count">
                   {formatNumber(byType.get(type) ?? 0)}
                 </span>
@@ -131,7 +130,7 @@ export default function DashboardPage() {
 
       {all.length > 0 && (
         <section aria-labelledby="planets-heading">
-          <h2 id="planets-heading">The Sun &amp; planets</h2>
+          <h2 id="planets-heading">{t('dashboard.sunAndPlanets')}</h2>
           <div className="card-grid">
             {sun ? <BodyCard body={sun} /> : null}
             {planets.map((p) => (

@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom';
+import { useI18n } from '../i18n';
 
 export default function NotFoundPage() {
+  const { t } = useI18n();
   return (
     <div className="page">
       <div className="state-box state-empty">
         <span className="state-icon" aria-hidden="true">🛰️</span>
         <div>
-          <strong>404 — Lost in space</strong>
-          <p>That page does not exist in this galaxy.</p>
+          <strong>{t('notfound.title')}</strong>
+          <p>{t('notfound.text')}</p>
           <Link to="/" className="btn">
-            Back to the dashboard
+            {t('notfound.back')}
           </Link>
         </div>
       </div>

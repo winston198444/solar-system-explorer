@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n';
+
 const TYPE_CLASS: Record<string, string> = {
   Planet: 'badge-planet',
   'Dwarf Planet': 'badge-dwarf',
@@ -8,8 +10,11 @@ const TYPE_CLASS: Record<string, string> = {
 };
 
 export default function Badge({ type }: { type: string }) {
+  const { typeLabel } = useI18n();
   return (
-    <span className={`badge ${TYPE_CLASS[type] ?? 'badge-default'}`}>{type}</span>
+    <span className={`badge ${TYPE_CLASS[type] ?? 'badge-default'}`}>
+      {typeLabel(type)}
+    </span>
   );
 }
 

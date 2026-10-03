@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useI18n } from '../i18n';
 
 export default function ErrorState({
   error,
@@ -7,17 +8,18 @@ export default function ErrorState({
   error: unknown;
   onRetry?: () => void;
 }) {
+  const { t } = useI18n();
   const message =
     error instanceof Error ? error.message : 'Something went wrong';
   return (
     <div className="state-box state-error" role="alert">
       <span className="state-icon" aria-hidden="true">⚠️</span>
       <div>
-        <strong>Failed to load data</strong>
+        <strong>{t('common.error')}</strong>
         <p>{message}</p>
         {onRetry ? (
           <button type="button" className="btn" onClick={onRetry}>
-            Retry
+            {t('common.retry')}
           </button>
         ) : null}
       </div>

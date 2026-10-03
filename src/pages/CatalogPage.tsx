@@ -15,6 +15,7 @@ import {
   formatTempShort,
   toSuperscript,
 } from '../lib/format';
+import { useI18n, type DictKey } from '../i18n';
 import Skeleton from '../components/Skeleton';
 import ErrorState, { EmptyState } from '../components/States';
 import Badge from '../components/Badge';
@@ -22,13 +23,13 @@ import Pagination from '../components/Pagination';
 
 type SortKey = 'name' | 'meanRadius' | 'mass' | 'gravity' | 'avgTemp' | 'sideralOrbit';
 
-const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: 'name', label: 'Name' },
-  { value: 'meanRadius', label: 'Radius' },
-  { value: 'mass', label: 'Mass' },
-  { value: 'gravity', label: 'Gravity' },
-  { value: 'avgTemp', label: 'Temperature' },
-  { value: 'sideralOrbit', label: 'Orbital period' },
+const SORT_OPTIONS: { value: SortKey; labelKey: DictKey }[] = [
+  { value: 'name', labelKey: 'sort.name' },
+  { value: 'meanRadius', labelKey: 'sort.radius' },
+  { value: 'mass', labelKey: 'sort.mass' },
+  { value: 'gravity', labelKey: 'sort.gravity' },
+  { value: 'avgTemp', labelKey: 'sort.temp' },
+  { value: 'sideralOrbit', labelKey: 'sort.period' },
 ];
 
 function sortValue(body: Body, key: SortKey): number | string {
@@ -59,26 +60,34 @@ const PARENT_TYPE_ORDER = ['Planet', 'Dwarf Planet', 'Asteroid'];
 
 function SortableTh({
   id,
-  label,
+  labelKey,
   sortKey,
   sortDir,
   onSort,
 }: {
   id: SortKey;
-  label: string;
+  labelKey: DictKey;
   sortKey: SortKey;
   sortDir: 'asc' | 'desc';
   onSort: (key: SortKey) => void;
 }) {
+  const { t } = useI18n();
   const active = sortKey === id;
   const ariaDir = active ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none';
+  const label = t(labelKey);
   return (
     <th scope="col" aria-sort={ariaDir}>
       <button
         type="button"
         className="th-sort"
         onClick={() => onSort(id)}
-        aria-label={`Sort by ${label}${active ? ` (${ariaDir})` : ''}`}
+        aria-label={
+          active
+            ? `${t('sort.aria', { label })} (${
+                sortDir === 'asc' ? t('sort.asc') : t('sort.desc')
+              })`
+            : t('sort.aria', { label })
+        }
       >
         {label}{' '}
         <span aria-hidden="true">
@@ -100,44 +109,45 @@ function BodiesTable({
   sortDir: 'asc' | 'desc';
   onSort: (key: SortKey) => void;
 }) {
+  const { t } = useI18n();
   return (
     <div className="table-scroll">
       <table className="data-table">
         <thead>
           <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
+            <th scope="col">{t('col.name')}</th>
+            <th scope="col">{t('col.type')}</th>
             <SortableTh
               id="meanRadius"
-              label="Radius"
+              labelKey="col.radius"
               sortKey={sortKey}
               sortDir={sortDir}
               onSort={onSort}
             />
             <SortableTh
               id="mass"
-              label="Mass"
+              labelKey="col.mass"
               sortKey={sortKey}
               sortDir={sortDir}
               onSort={onSort}
             />
             <SortableTh
               id="gravity"
-              label="Gravity"
+              labelKey="col.gravity"
               sortKey={sortKey}
               sortDir={sortDir}
               onSort={onSort}
             />
             <SortableTh
               id="avgTemp"
-              label="Temp"
+              labelKey="col.temp"
               sortKey={sortKey}
               sortDir={sortDir}
               onSort={onSort}
             />
             <SortableTh
               id="sideralOrbit"
-              label="Period"
+              labelKey="col.period"
               sortKey={sortKey}
               sortDir={sortDir}
               onSort={onSort}
@@ -156,9 +166,6 @@ function BodiesTable({
                   <Link to={`/body/${encodeURIComponent(b.id)}`}>
                     {b.englishName || b.name}
                   </Link>
-                  {b.name !== b.englishName ? (
-                    <small className="cell-sub">{b.name}</small>
-                  ) : null}
                 </td>
                 <td>
                   <Badge type={b.bodyType} />
@@ -182,6 +189,7 @@ function BodiesTable({
 }
 
 export default function CatalogPage() {
+  const { t, typeLabel } = useI18n();
   const [searchParams] = useSearchParams();
   const initialType = searchParams.get('type') as BodyType | null;
 
@@ -307,11 +315,8 @@ export default function CatalogPage() {
   return (
     <div className="page">
       <header className="page-header">
-        <h1>Catalog</h1>
-        <p>
-          Every object in the API — filter, search, sort and group
-          the full list.
-        </p>
+        <h1>{t('catalog.title')}</h1>
+        <p>{t('catalog.subtitle')}</p>
       </header>
 
       {isLoading && <Skeleton lines={6} />}
@@ -321,11 +326,11 @@ export default function CatalogPage() {
         <>
           <div className="toolbar">
             <label className="toolbar-field">
-              <span>Search</span>
+              <span>{t('catalog.search')}</span>
               <input
                 type="search"
                 value={search}
-                placeholder="Name…"
+                placeholder={t('catalog.searchPlaceholder')}
                 onChange={(e) => {
                   setSearch(e.target.value);
                   setPage(1);
@@ -333,7 +338,7 @@ export default function CatalogPage() {
               />
             </label>
             <label className="toolbar-field">
-              <span>Type</span>
+              <span>{t('catalog.type')}</span>
               <select
                 value={type}
                 onChange={(e) => {
@@ -342,10 +347,10 @@ export default function CatalogPage() {
                   setPage(1);
                 }}
               >
-                <option value="All">All types</option>
-                {BODY_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                <option value="All">{t('catalog.allTypes')}</option>
+                {BODY_TYPES.map((t2) => (
+                  <option key={t2} value={t2}>
+                    {typeLabel(t2)}
                   </option>
                 ))}
               </select>
@@ -354,7 +359,7 @@ export default function CatalogPage() {
             {showMoonControls && (
               <>
                 <label className="toolbar-field">
-                  <span>Orbits</span>
+                  <span>{t('catalog.orbits')}</span>
                   <select
                     value={parent}
                     onChange={(e) => {
@@ -362,7 +367,7 @@ export default function CatalogPage() {
                       setPage(1);
                     }}
                   >
-                    <option value="All">All parent bodies</option>
+                    <option value="All">{t('catalog.allParents')}</option>
                     {PARENT_TYPE_ORDER.map((parentType) => {
                       const ofType = moonParents.filter(
                         (p) => p.type === parentType,
@@ -371,15 +376,13 @@ export default function CatalogPage() {
                       return (
                         <optgroup
                           key={parentType}
-                          label={
-                            parentType === 'Asteroid'
-                              ? 'Asteroids'
-                              : `${parentType}s`
-                          }
+                          label={t(
+                            `catalog.parentGroup.${parentType}` as DictKey,
+                          )}
                         >
                           {ofType.map((p) => (
                             <option key={p.id} value={p.id}>
-                              {p.name} ({p.count})
+                              {p.name} ({formatNumber(p.count)})
                             </option>
                           ))}
                         </optgroup>
@@ -393,20 +396,20 @@ export default function CatalogPage() {
                     checked={groupByParent}
                     onChange={(e) => setGroupByParent(e.target.checked)}
                   />
-                  <span>Group by planet</span>
+                  <span>{t('catalog.groupByPlanet')}</span>
                 </label>
               </>
             )}
 
             <label className="toolbar-field">
-              <span>Sort by</span>
+              <span>{t('catalog.sortBy')}</span>
               <select
                 value={sortKey}
                 onChange={(e) => changeSort(e.target.value as SortKey)}
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
-                    {o.label}
+                    {t(o.labelKey)}
                   </option>
                 ))}
               </select>
@@ -416,10 +419,12 @@ export default function CatalogPage() {
               className="btn"
               onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
             >
-              {sortDir === 'asc' ? '↑ Ascending' : '↓ Descending'}
+              {sortDir === 'asc'
+                ? `↑ ${t('catalog.ascending')}`
+                : `↓ ${t('catalog.descending')}`}
             </button>
             <label className="toolbar-field">
-              <span>Rows</span>
+              <span>{t('catalog.rows')}</span>
               <select
                 value={pageSize}
                 onChange={(e) => {
@@ -437,8 +442,8 @@ export default function CatalogPage() {
 
           {total === 0 ? (
             <EmptyState>
-              <strong>No objects match your filters.</strong>
-              <p>Try a different search term or type.</p>
+              <strong>{t('catalog.noMatch')}</strong>
+              <p>{t('catalog.noMatchHint')}</p>
             </EmptyState>
           ) : grouped ? (
             groups.map(([pid, moons]) => {
@@ -456,7 +461,9 @@ export default function CatalogPage() {
                     {info ? <Badge type={info.type} /> : null}
                     <span className="group-count">
                       {formatNumber(moons.length)}{' '}
-                      {moons.length === 1 ? 'moon' : 'moons'}
+                      {moons.length === 1
+                        ? t('catalog.moon.one')
+                        : t('catalog.moon.other')}
                     </span>
                   </h2>
                   <BodiesTable

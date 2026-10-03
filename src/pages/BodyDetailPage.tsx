@@ -12,12 +12,14 @@ import {
   formatScientific,
   formatTemp,
 } from '../lib/format';
+import { useI18n } from '../i18n';
 import Field from '../components/Field';
 import Badge from '../components/Badge';
 import Skeleton from '../components/Skeleton';
 import ErrorState from '../components/States';
 
 export default function BodyDetailPage() {
+  const { t } = useI18n();
   const { id = '' } = useParams();
   const { data, isLoading, error } = useQuery({
     queryKey: ['body', id],
@@ -66,17 +68,17 @@ export default function BodyDetailPage() {
   return (
     <div className="page">
       <nav className="breadcrumb" aria-label="Breadcrumb">
-        <Link to="/catalog">Catalog</Link> / <span>{data.englishName}</span>
+        <Link to="/catalog">{t('nav.catalog')}</Link> /{' '}
+        <span>{data.englishName}</span>
       </nav>
 
       <header className="detail-header">
         <div>
           <h1>{data.englishName || data.name}</h1>
-          {data.name !== data.englishName && (
-            <p className="detail-native">{data.name}</p>
-          )}
           {alternativeName && (
-            <p className="detail-alt">Also known as: {alternativeName}</p>
+            <p className="detail-alt">
+              {t('detail.alsoKnownAs')} {alternativeName}
+            </p>
           )}
         </div>
         <Badge type={data.bodyType} />
@@ -84,10 +86,10 @@ export default function BodyDetailPage() {
 
       <div className="detail-grid">
         <section className="panel" aria-labelledby="physical-heading">
-          <h2 id="physical-heading">Physical characteristics</h2>
+          <h2 id="physical-heading">{t('detail.physical')}</h2>
           <dl className="field-list">
             <Field
-              label="Mass"
+              label={t('detail.mass')}
               value={
                 mass
                   ? formatScientific(mass.massValue, mass.massExponent, 'kg')
@@ -95,7 +97,7 @@ export default function BodyDetailPage() {
               }
             />
             <Field
-              label="Volume"
+              label={t('detail.volume')}
               value={
                 vol && vol.volValue !== 0
                   ? formatScientific(vol.volValue, vol.volExponent, 'km³')
@@ -103,15 +105,15 @@ export default function BodyDetailPage() {
               }
             />
             <Field
-              label="Density"
+              label={t('detail.density')}
               value={density !== null ? `${density.toFixed(2)} g/cm³` : null}
             />
             <Field
-              label="Surface gravity"
+              label={t('detail.surfaceGravity')}
               value={gravity !== null ? `${gravity.toFixed(2)} m/s²` : null}
             />
             <Field
-              label="Escape velocity"
+              label={t('detail.escapeVelocity')}
               value={
                 escape !== null
                   ? `${formatNumber(escape)} km/s`
@@ -119,7 +121,7 @@ export default function BodyDetailPage() {
               }
             />
             <Field
-              label="Mean radius"
+              label={t('detail.meanRadius')}
               value={
                 meanRadius !== null
                   ? formatDistance(meanRadius)
@@ -127,35 +129,35 @@ export default function BodyDetailPage() {
               }
             />
             <Field
-              label="Equatorial radius"
+              label={t('detail.equatorialRadius')}
               value={equaRadius !== null ? formatDistance(equaRadius) : null}
             />
             <Field
-              label="Polar radius"
+              label={t('detail.polarRadius')}
               value={polarRadius !== null ? formatDistance(polarRadius) : null}
             />
             <Field
-              label="Flattening"
+              label={t('detail.flattening')}
               value={flattening !== null ? flattening.toFixed(4) : null}
             />
-            <Field label="Dimensions" value={dimension} />
+            <Field label={t('detail.dimensions')} value={dimension} />
             <Field
-              label="Axial tilt"
+              label={t('detail.axialTilt')}
               value={axialTilt !== null ? formatAngle(axialTilt) : null}
             />
             <Field
-              label="Average temperature"
+              label={t('detail.avgTemp')}
               value={temp !== null ? formatTemp(temp) : null}
-              title="Kelvin, converted to Celsius"
+              title={t('detail.avgTempTitle')}
             />
           </dl>
         </section>
 
         <section className="panel" aria-labelledby="orbit-heading">
-          <h2 id="orbit-heading">Orbit &amp; rotation</h2>
+          <h2 id="orbit-heading">{t('detail.orbit')}</h2>
           <dl className="field-list">
             <Field
-              label="Semi-major axis"
+              label={t('detail.semiMajorAxis')}
               value={
                 semimajor !== null
                   ? `${formatDistance(semimajor)} (${formatAu(semimajor)})`
@@ -163,7 +165,7 @@ export default function BodyDetailPage() {
               }
             />
             <Field
-              label="Perihelion"
+              label={t('detail.perihelion')}
               value={
                 perihelion !== null
                   ? `${formatDistance(perihelion)} (${formatAu(perihelion)})`
@@ -171,7 +173,7 @@ export default function BodyDetailPage() {
               }
             />
             <Field
-              label="Aphelion"
+              label={t('detail.aphelion')}
               value={
                 aphelion !== null
                   ? `${formatDistance(aphelion)} (${formatAu(aphelion)})`
@@ -179,51 +181,55 @@ export default function BodyDetailPage() {
               }
             />
             <Field
-              label="Eccentricity"
+              label={t('detail.eccentricity')}
               value={eccentricity !== null ? eccentricity.toFixed(4) : null}
             />
             <Field
-              label="Inclination"
+              label={t('detail.inclination')}
               value={inclination !== null ? formatAngle(inclination) : null}
             />
             <Field
-              label="Mean anomaly"
+              label={t('detail.meanAnomaly')}
               value={mainAnomaly !== null ? formatAngle(mainAnomaly) : null}
             />
             <Field
-              label="Argument of periapsis"
+              label={t('detail.argPeriapsis')}
               value={argPeriapsis !== null ? formatAngle(argPeriapsis) : null}
             />
             <Field
-              label="Longitude of ascending node"
+              label={t('detail.longAscNode')}
               value={longAscNode !== null ? formatAngle(longAscNode) : null}
             />
             <Field
-              label="Orbital period"
+              label={t('detail.orbitalPeriod')}
               value={period !== null ? formatPeriod(period) : null}
             />
             <Field
-              label="Rotation period"
-              value={rotation !== null ? formatRotation(rotation) : null}
-              title="Negative values indicate retrograde rotation"
+              label={t('detail.rotationPeriod')}
+              value={
+                rotation !== null
+                  ? formatRotation(rotation, t('format.retrograde'))
+                  : null
+              }
+              title={t('detail.rotationTitle')}
             />
           </dl>
         </section>
 
         <section className="panel" aria-labelledby="discovery-heading">
-          <h2 id="discovery-heading">Discovery</h2>
+          <h2 id="discovery-heading">{t('detail.discovery')}</h2>
           <dl className="field-list">
-            <Field label="Discovered by" value={discoveredBy} />
-            <Field label="Discovery date" value={discoveryDate} />
+            <Field label={t('detail.discoveredBy')} value={discoveredBy} />
+            <Field label={t('detail.discoveryDate')} value={discoveryDate} />
           </dl>
         </section>
 
         <section className="panel" aria-labelledby="system-heading">
-          <h2 id="system-heading">System</h2>
+          <h2 id="system-heading">{t('detail.system')}</h2>
           {parent ? (
             <dl className="field-list">
               <Field
-                label="Orbits"
+                label={t('detail.orbits')}
                 value={
                   <Link
                     to={`/body/${encodeURIComponent(
@@ -238,15 +244,15 @@ export default function BodyDetailPage() {
           ) : (
             <p className="panel-note">
               {data.bodyType === 'Moon'
-                ? 'Orbits a body not listed in the catalog.'
-                : 'Primary body — not orbiting another catalog object.'}
+                ? t('detail.orbitsUnknown')
+                : t('detail.primary')}
             </p>
           )}
 
           {moons.length > 0 && (
             <>
               <h3 className="subsection">
-                Moons ({formatNumber(moons.length)})
+                {t('detail.moonsCount', { count: formatNumber(moons.length) })}
               </h3>
               <div className="chip-list">
                 {moons.map((m) => (
@@ -267,7 +273,7 @@ export default function BodyDetailPage() {
       </div>
 
       <p className="page-foot">
-        API resource:{' '}
+        {t('detail.apiResource')}{' '}
         <a href={data.rel} target="_blank" rel="noopener noreferrer">
           {data.rel}
         </a>

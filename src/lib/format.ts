@@ -27,8 +27,10 @@ export function formatScientific(value: number, exponent: number, unit: string):
 /** Exposes superscript conversion for inline table formatting. */
 export { toSuperscript };
 
+import { getLocale } from '../i18n/locale';
+
 export function formatNumber(value: number, decimals = 0): string {
-  return value.toLocaleString('en-US', {
+  return value.toLocaleString(getLocale(), {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
@@ -52,11 +54,11 @@ export function formatTemp(kelvin: number): string {
 }
 
 /** "9.93 h" or "243.0 days (retrograde)". */
-export function formatRotation(hours: number): string {
+export function formatRotation(hours: number, retrograde = 'retrograde'): string {
   const retro = hours < 0;
   const abs = Math.abs(hours);
   const main = abs >= 48 ? `${(abs / 24).toFixed(1)} days` : `${abs.toFixed(2)} h`;
-  return retro ? `${main} (retrograde)` : main;
+  return retro ? `${main} (${retrograde})` : main;
 }
 
 /** "87.97 days" or "4,332.59 days (11.9 yr)". */

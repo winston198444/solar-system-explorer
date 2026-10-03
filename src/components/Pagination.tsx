@@ -1,3 +1,6 @@
+import { useI18n } from '../i18n';
+import { formatNumber } from '../lib/format';
+
 interface PaginationProps {
   page: number;
   pageSize: number;
@@ -6,6 +9,7 @@ interface PaginationProps {
 }
 
 export default function Pagination({ page, pageSize, total, onChange }: PaginationProps) {
+  const { t } = useI18n();
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const start = Math.min(total, (page - 1) * pageSize + 1);
   const end = Math.min(total, page * pageSize);
@@ -20,9 +24,15 @@ export default function Pagination({ page, pageSize, total, onChange }: Paginati
   }
 
   return (
-    <nav className="pagination" aria-label="Pagination">
+    <nav className="pagination" aria-label={t('common.paginationNav')}>
       <span className="pagination-info">
-        {total === 0 ? '0 results' : `${start}–${end} of ${total}`}
+        {total === 0
+          ? t('common.zeroResults')
+          : t('pagination.info', {
+              start: formatNumber(start),
+              end: formatNumber(end),
+              total: formatNumber(total),
+            })}
       </span>
       <div className="pagination-controls">
         <button
@@ -30,9 +40,9 @@ export default function Pagination({ page, pageSize, total, onChange }: Paginati
           className="btn btn-small"
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
-          aria-label="Previous page"
+          aria-label={t('common.prevPage')}
         >
-          <span aria-hidden="true">←</span> Prev
+          <span aria-hidden="true">←</span> {t('common.prev')}
         </button>
         {pages.map((p, i) =>
           p === '…' ? (
@@ -47,7 +57,7 @@ export default function Pagination({ page, pageSize, total, onChange }: Paginati
               onClick={() => onChange(p)}
               aria-current={p === page ? 'page' : undefined}
             >
-              {p}
+              {formatNumber(p)}
             </button>
           ),
         )}
@@ -56,9 +66,9 @@ export default function Pagination({ page, pageSize, total, onChange }: Paginati
           className="btn btn-small"
           disabled={page >= totalPages}
           onClick={() => onChange(page + 1)}
-          aria-label="Next page"
+          aria-label={t('common.nextPage')}
         >
-          Next <span aria-hidden="true">→</span>
+          {t('common.next')} <span aria-hidden="true">→</span>
         </button>
       </div>
     </nav>

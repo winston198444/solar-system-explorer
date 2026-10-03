@@ -18,7 +18,6 @@ export default function BodyCard({ body }: { body: Body }) {
         {radius !== null ? <span>{formatNumber(radius)} km</span> : null}
         {temp !== null ? <span>{formatTempShort(temp)}</span> : null}
       </div>
-      <p className="body-card-native">{body.name !== body.englishName ? body.name : ''}</p>
     </Link>
   );
 }
