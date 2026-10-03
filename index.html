@@ -23,8 +23,11 @@
     <script>
         async function fetchPlanets() {
             try {
-                // Petición al sistema solar con tu token personal
-                const response = await fetch('https://api.le-systeme-solaire.net/rest/bodies?filter[]=isPlanet,eq,true', {
+                // Enrutamos la petición a través de un proxy CORS para evitar el bloqueo del navegador
+                const targetUrl = 'https://api.le-systeme-solaire.net/rest/bodies?filter[]=isPlanet,eq,true';
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
+
+                const response = await fetch(proxyUrl, {
                     headers: {
                         'Authorization': 'Bearer a727fc44-4b90-47c6-8b3c-7a129c36b32a'
                     }
