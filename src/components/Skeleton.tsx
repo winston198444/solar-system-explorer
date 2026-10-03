@@ -4,13 +4,10 @@ export default function Skeleton({
   lines?: number;
 }) {
   return (
-    <div className="skeleton" aria-label="Loading">
+    <div className="skeleton" role="status">
+      <span className="sr-only">Loading…</span>
       {Array.from({ length: lines }, (_, i) => (
-        <div
-          key={i}
-          className="skeleton-line"
-          style={{ width: `${Math.max(30, 100 - i * 15)}%` }}
-        />
+        <div key={i} className="skeleton-line" />
       ))}
     </div>
   );

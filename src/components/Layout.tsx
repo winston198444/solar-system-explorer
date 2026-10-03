@@ -9,6 +9,9 @@ const NAV = [
 export default function Layout() {
   return (
     <div className="app">
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
       <header className="app-header">
         <div className="app-header-inner">
           <NavLink to="/" className="brand">
@@ -34,26 +37,20 @@ export default function Layout() {
           </nav>
         </div>
       </header>
-      <main className="app-main">
+      <main className="app-main" id="main-content">
         <Outlet />
       </main>
       <footer className="app-footer">
-        <p className="footer-links">
+        <p className="footer-note">
+          Data from the{' '}
           <a
             href="https://api.le-systeme-solaire.net"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
           >
-            API documentation
-          </a>
-          {' · '}
-          <a
-            href="https://api.le-systeme-solaire.net/generatekey.html"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Get an API key
-          </a>
+            Solar System openData API
+          </a>{' '}
+          (api.le-systeme-solaire.net)
         </p>
       </footer>
     </div>

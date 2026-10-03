@@ -7,6 +7,17 @@
       name="description"
       content="Explore the Solar System: planets, dwarf planets, moons, asteroids and comets — powered by the Solar System openData API."
     />
+    <meta name="theme-color" content="#0b0b1a" />
+    <!--
+      Strict CSP: the app is a self-contained bundle; the only
+      cross-origin connection is the Cloudflare API proxy. No
+      inline scripts/styles, no framing (clickjacking protection).
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://solar-system-explorer.198cuatro.workers.dev; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <title>Solar System Explorer</title>
   </head>
   <body>

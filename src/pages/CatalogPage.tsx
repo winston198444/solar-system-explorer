@@ -57,6 +57,38 @@ interface MoonParent {
 
 const PARENT_TYPE_ORDER = ['Planet', 'Dwarf Planet', 'Asteroid'];
 
+function SortableTh({
+  id,
+  label,
+  sortKey,
+  sortDir,
+  onSort,
+}: {
+  id: SortKey;
+  label: string;
+  sortKey: SortKey;
+  sortDir: 'asc' | 'desc';
+  onSort: (key: SortKey) => void;
+}) {
+  const active = sortKey === id;
+  const ariaDir = active ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none';
+  return (
+    <th scope="col" aria-sort={ariaDir}>
+      <button
+        type="button"
+        className="th-sort"
+        onClick={() => onSort(id)}
+        aria-label={`Sort by ${label}${active ? ` (${ariaDir})` : ''}`}
+      >
+        {label}{' '}
+        <span aria-hidden="true">
+          {active ? (sortDir === 'asc' ? '↑' : '↓') : ''}
+        </span>
+      </button>
+    </th>
+  );
+}
+
 function BodiesTable({
   bodies,
   sortKey,
@@ -73,53 +105,43 @@ function BodiesTable({
       <table className="data-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>
-              <button
-                type="button"
-                className="th-sort"
-                onClick={() => onSort('meanRadius')}
-              >
-                Radius {sortKey === 'meanRadius' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
-              </button>
-            </th>
-            <th>
-              <button
-                type="button"
-                className="th-sort"
-                onClick={() => onSort('mass')}
-              >
-                Mass {sortKey === 'mass' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
-              </button>
-            </th>
-            <th>
-              <button
-                type="button"
-                className="th-sort"
-                onClick={() => onSort('gravity')}
-              >
-                Gravity {sortKey === 'gravity' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
-              </button>
-            </th>
-            <th>
-              <button
-                type="button"
-                className="th-sort"
-                onClick={() => onSort('avgTemp')}
-              >
-                Temp {sortKey === 'avgTemp' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
-              </button>
-            </th>
-            <th>
-              <button
-                type="button"
-                className="th-sort"
-                onClick={() => onSort('sideralOrbit')}
-              >
-                Period {sortKey === 'sideralOrbit' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
-              </button>
-            </th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <SortableTh
+              id="meanRadius"
+              label="Radius"
+              sortKey={sortKey}
+              sortDir={sortDir}
+              onSort={onSort}
+            />
+            <SortableTh
+              id="mass"
+              label="Mass"
+              sortKey={sortKey}
+              sortDir={sortDir}
+              onSort={onSort}
+            />
+            <SortableTh
+              id="gravity"
+              label="Gravity"
+              sortKey={sortKey}
+              sortDir={sortDir}
+              onSort={onSort}
+            />
+            <SortableTh
+              id="avgTemp"
+              label="Temp"
+              sortKey={sortKey}
+              sortDir={sortDir}
+              onSort={onSort}
+            />
+            <SortableTh
+              id="sideralOrbit"
+              label="Period"
+              sortKey={sortKey}
+              sortDir={sortDir}
+              onSort={onSort}
+            />
           </tr>
         </thead>
         <tbody>
@@ -464,11 +486,6 @@ export default function CatalogPage() {
           )}
         </>
       )}
-
-      <p className="page-foot">
-        Tip: negative rotation values are retrograde. Distances are in
-        km; temperatures are stored in Kelvin and shown in °C.
-      </p>
     </div>
   );
 }

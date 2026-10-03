@@ -20,7 +20,7 @@ export default function Pagination({ page, pageSize, total, onChange }: Paginati
   }
 
   return (
-    <div className="pagination">
+    <nav className="pagination" aria-label="Pagination">
       <span className="pagination-info">
         {total === 0 ? '0 results' : `${start}–${end} of ${total}`}
       </span>
@@ -30,8 +30,9 @@ export default function Pagination({ page, pageSize, total, onChange }: Paginati
           className="btn btn-small"
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
+          aria-label="Previous page"
         >
-          ← Prev
+          <span aria-hidden="true">←</span> Prev
         </button>
         {pages.map((p, i) =>
           p === '…' ? (
@@ -55,10 +56,11 @@ export default function Pagination({ page, pageSize, total, onChange }: Paginati
           className="btn btn-small"
           disabled={page >= totalPages}
           onClick={() => onChange(page + 1)}
+          aria-label="Next page"
         >
-          Next →
+          Next <span aria-hidden="true">→</span>
         </button>
       </div>
-    </div>
+    </nav>
   );
 }

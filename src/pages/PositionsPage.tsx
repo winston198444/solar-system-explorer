@@ -183,11 +183,11 @@ export default function PositionsPage() {
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Object</th>
-                    <th>Right ascension</th>
-                    <th>Declination</th>
-                    <th>Azimuth</th>
-                    <th>Altitude</th>
+                    <th scope="col">Object</th>
+                    <th scope="col">Right ascension</th>
+                    <th scope="col">Declination</th>
+                    <th scope="col">Azimuth</th>
+                    <th scope="col">Altitude</th>
                   </tr>
                 </thead>
                 <tbody>

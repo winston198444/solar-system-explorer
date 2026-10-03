@@ -65,7 +65,7 @@ export default function BodyDetailPage() {
 
   return (
     <div className="page">
-      <nav className="breadcrumb">
+      <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link to="/catalog">Catalog</Link> / <span>{data.englishName}</span>
       </nav>
 
@@ -268,7 +268,7 @@ export default function BodyDetailPage() {
 
       <p className="page-foot">
         API resource:{' '}
-        <a href={data.rel} target="_blank" rel="noreferrer">
+        <a href={data.rel} target="_blank" rel="noopener noreferrer">
           {data.rel}
         </a>
       </p>
