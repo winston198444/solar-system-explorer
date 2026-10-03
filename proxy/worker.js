@@ -13,7 +13,7 @@
  * → Settings → Variables → Secrets → add SOLAR_API_KEY).
  */
 export default {
-  async fetch(request: Request, env: { SOLAR_API_KEY?: string }) {
+  async fetch(request, env) {
     // CORS preflight (our app only makes simple GET requests,
     // but answer OPTIONS defensively).
     if (request.method === 'OPTIONS') {
