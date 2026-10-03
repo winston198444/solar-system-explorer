@@ -20,7 +20,7 @@
     <div id="solar-container" class="grid"></div>
 
     <script>
-        // Datos completos y reales de los planetas del sistema solar
+        // Datos reales y actualizados de los planetas del sistema solar
         const planetsData = [
             { name: "Mercurio", englishName: "Mercury", mass: { value: 3.30, exponent: 23 }, gravity: 3.7, moonsCount: 0, density: 5.43 },
             { name: "Venus", englishName: "Venus", mass: { value: 4.87, exponent: 24 }, gravity: 8.87, moonsCount: 0, density: 5.24 },
@@ -44,7 +44,7 @@
                     <p><strong>Masa:</strong> ${planet.mass.value} × 10<sup>${planet.mass.exponent}</sup> kg</p>
                     <p><strong>Gravedad:</strong> ${planet.gravity} m/s²</p>
                     <p><strong>Densidad:</strong> ${planet.density} g/cm³</p>
-                    <p><strong>Lunas conociadas:</strong> ${planet.moonsCount}</p>
+                    <p><strong>Lunas conocidas:</strong> ${planet.moonsCount}</p>
                 `;
                 container.appendChild(card);
             });
