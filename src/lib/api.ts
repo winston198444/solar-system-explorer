@@ -35,6 +35,19 @@ async function request<T>(path: string, params?: Record<string, QueryParam>): Pr
   }
   const response = await fetch(buildUrl(path, params), { headers });
   if (!response.ok) {
+    // Production without a proxy cannot work: the API demands the key
+    // even on CORS preflight (OPTIONS) requests, so browsers can never
+    // call it directly. A same-origin 404 means no proxy is configured.
+    if (
+      response.status === 404 &&
+      !API_BASE &&
+      !window.location.hostname.startsWith('localhost')
+    ) {
+      throw new ApiError(
+        404,
+        'API proxy not configured. Set the VITE_API_BASE_URL secret to your proxy URL (see proxy/worker.js) before building.',
+      );
+    }
     const detail = await response.text().catch(() => response.statusText);
     throw new ApiError(response.status, detail || `Request failed (${response.status})`);
   }

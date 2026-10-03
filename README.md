@@ -63,20 +63,41 @@ npm run dev            # http://localhost:5173
 Get a free API key at
 https://api.le-systeme-solaire.net/generatekey.html.
 
-## Build & deploy
+## Deploy
+
+> **A proxy is mandatory.** The API requires the API key even on
+> CORS preflight (`OPTIONS`) requests, and browsers never send the
+> key during preflight — so the API **cannot be called directly
+> from a browser**. All traffic must go through a server-side proxy
+> that injects the key.
+
+### 1. Deploy the proxy (Cloudflare Workers, free tier)
 
 ```bash
-npm run build          # outputs dist/
+npm i -g wrangler
+wrangler deploy proxy/worker.js --name solar-api-proxy
+wrangler secret put SOLAR_API_KEY   # paste your API key
 ```
 
-- **Static host (GitHub Pages, Netlify…)** + Cloudflare Worker proxy:
-  `wrangler deploy proxy/worker.js`, set the `SOLAR_API_KEY` secret,
-  then build with `VITE_API_BASE_URL=https://<worker>.workers.dev`.
-- **Self-hosted Node:** `npm i express && npm run build &&
-  SOLAR_API_KEY=<key> node proxy/server.js` (serves the SPA + proxy).
-- **Direct mode (not recommended):** set `VITE_API_KEY` and
-  `VITE_API_BASE_URL=https://api.le-systeme-solaire.net/rest` — the
-  key becomes visible to every visitor.
+Copy the worker URL: `https://solar-api-proxy.<account>.workers.dev`.
+
+Alternative: self-host `proxy/server.js` (Express) on any VPS/container.
+
+### 2. Deploy the SPA to GitHub Pages
+
+1. Repo → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. Repo → **Settings → Secrets and variables → Actions → New repository
+   secret**: `VITE_API_BASE_URL` = your worker URL.
+3. Push to `main`: `.github/workflows/deploy.yml` builds and
+   publishes `dist/` automatically.
+
+The site lives at `https://winston198444.github.io` (user site,
+asset base `/`). For a project site (`…/repo-name/`), set
+`base: '/repo-name/'` in `vite.config.ts`.
+
+Do **not** publish the repo root as-is — that serves the source
+`index.html` (which imports `/src/main.tsx` and 404s). GitHub
+Pages must serve the built `dist/` folder.
 
 ## API reference
 
