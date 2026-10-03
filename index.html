@@ -1,102 +1,16 @@
-<!DOCTYPE html> 
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Avanzado del Sistema Solar</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #0b0b1a; color: #fff; padding: 20px; margin: 0; }
-        h1 { text-align: center; color: #d1d1f7; margin-bottom: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; }
-        .card { background: #1a1a2e; padding: 20px; border-radius: 12px; border: 1px solid #33334d; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-5px); border-color: #555580; }
-        .card h3 { color: #4da6ff; margin-top: 0; border-bottom: 1px solid #33334d; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: baseline; }
-        .card h3 span { font-size: 0.8rem; color: #8888aa; font-weight: normal; }
-        .section-title { font-size: 0.85rem; text-transform: uppercase; color: #a2a2c2; margin: 12px 0 6px 0; border-bottom: 1px dashed #2a2a40; padding-bottom: 3px; letter-spacing: 0.5px; }
-        .card p { margin: 5px 0; color: #d1d1e0; font-size: 0.92rem; display: flex; justify-content: space-between; }
-        .card p span { color: #fff; font-weight: bold; }
-    </style>
-</head>
-<body>
-
-    <h1>Catálogo Avanzado del Sistema Solar</h1>
-    <div id="solar-container" class="grid"></div>
-
-    <script>
-        // complete dataset with physical and orbital properties
-        const planetsData = [
-            {
-                name: "Mercurio", englishName: "Mercury",
-                mass: { value: 3.30, exponent: 23 }, gravity: 3.7, density: 5.43, radius: 2439.7,
-                temp: 167, orbit: 87.97, rotation: 1407.6, moonsCount: 0
-            },
-            {
-                name: "Venus", englishName: "Venus",
-                mass: { value: 4.87, exponent: 24 }, gravity: 8.87, density: 5.24, radius: 6051.8,
-                temp: 464, orbit: 224.70, rotation: -5832.5, moonsCount: 0
-            },
-            {
-                name: "Tierra", englishName: "Earth",
-                mass: { value: 5.97, exponent: 24 }, gravity: 9.81, density: 5.52, radius: 6371.0,
-                temp: 15, orbit: 365.26, rotation: 23.93, moonsCount: 1
-            },
-            {
-                name: "Marte", englishName: "Mars",
-                mass: { value: 6.42, exponent: 23 }, gravity: 3.71, density: 3.93, radius: 3389.5,
-                temp: -65, orbit: 686.98, rotation: 24.62, moonsCount: 2
-            },
-            {
-                name: "Júpiter", englishName: "Jupiter",
-                mass: { value: 1.89, exponent: 27 }, gravity: 24.79, density: 1.33, radius: 69911,
-                temp: -110, orbit: 4332.59, rotation: 9.93, moonsCount: 95
-            },
-            {
-                name: "Saturno", englishName: "Saturn",
-                mass: { value: 5.68, exponent: 26 }, gravity: 10.44, density: 0.69, radius: 58232,
-                temp: -140, orbit: 10759.22, rotation: 10.7, moonsCount: 146
-            },
-            {
-                name: "Urano", englishName: "Uranus",
-                mass: { value: 8.68, exponent: 25 }, gravity: 8.69, density: 1.27, radius: 25362,
-                temp: -195, orbit: 30685.4, rotation: -17.24, moonsCount: 28
-            },
-            {
-                name: "Neptuno", englishName: "Neptune",
-                mass: { value: 1.02, exponent: 26 }, gravity: 11.15, density: 1.64, radius: 24622,
-                temp: -200, orbit: 60189, rotation: 16.11, moonsCount: 16
-            }
-        ];
-
-        // render the complete planet catalog into the DOM
-        function renderPlanets() {
-            const container = document.getElementById('solar-container');
-            container.innerHTML = '';
-
-            planetsData.forEach(planet => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <h3>${planet.name} <span>(${planet.englishName})</span></h3>
-                    
-                    <div class="section-title">Física y Dimensiones</div>
-                    <p>Masa: <span>${planet.mass.value} × 10^${planet.mass.exponent} kg</span></p>
-                    <p>Radio medio: <span>${planet.radius.toLocaleString()} km</span></p>
-                    <p>Gravedad: <span>${planet.gravity} m/s²</span></p>
-                    <p>Densidad: <span>${planet.density} g/cm³</span></p>
-
-                    <div class="section-title">Órbita y Rotación</div>
-                    <p>Año (Traslación): <span>${planet.orbit.toLocaleString()} días</span></p>
-                    <p>Día (Rotación): <span>${planet.rotation} horas</span></p>
-                    <p>Temperatura media: <span>${planet.temp} °C</span></p>
-
-                    <div class="section-title">Sistema</div>
-                    <p>Lunas conocidas: <span>${planet.moonsCount}</span></p>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        renderPlanets();
-    </script>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Explore the Solar System: planets, dwarf planets, moons, asteroids and comets — powered by the Solar System openData API."
+    />
+    <title>Solar System Explorer</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
