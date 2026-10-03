@@ -1,4 +1,4 @@
-export type Lang = 'en' | 'es' | 'fr';
+export type Lang = 'en' | 'es';
 
 // Module-level locale used by format.ts (number formatting
 // follows the active UI language).

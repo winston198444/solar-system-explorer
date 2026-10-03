@@ -9,19 +9,17 @@ import {
 } from 'react';
 import { en } from './en';
 import { es } from './es';
-import { fr } from './fr';
 import { setLocale, type Lang } from './locale';
 
 export type { Lang };
 export type DictKey = keyof typeof en;
 export type Dict = Record<DictKey, string>;
 
-const DICTS: Record<Lang, Dict> = { en, es, fr };
+const DICTS: Record<Lang, Dict> = { en, es };
 
 export const SUPPORTED_LANGS: { code: Lang; label: string }[] = [
   { code: 'en', label: 'English' },
   { code: 'es', label: 'Español' },
-  { code: 'fr', label: 'Français' },
 ];
 
 const STORAGE_KEY = 'lang';
