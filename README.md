@@ -73,11 +73,27 @@ https://api.le-systeme-solaire.net/generatekey.html.
 
 ### 1. Deploy the proxy (Cloudflare Workers, free tier)
 
+The repo already contains `wrangler.toml` pointing at
+`proxy/worker.js`, so Wrangler deploys the plain worker and
+ignores the Vite app in the same repo.
+
+**From your PC:**
+
 ```bash
 npm i -g wrangler
-wrangler deploy proxy/worker.js --name solar-api-proxy
+wrangler login
+wrangler deploy                     # reads wrangler.toml
 wrangler secret put SOLAR_API_KEY   # paste your API key
 ```
+
+**From the Cloudflare dashboard** (Workers & Pages → Create
+application → Workers with Git integration → connect the
+repo), set:
+
+- **Build command:** (leave empty — the worker needs no build)
+- **Deploy command:** `npx wrangler deploy`
+- **Secret:** Workers → solar-api-proxy → Settings → Variables
+  → Secrets → add `SOLAR_API_KEY` with your API key
 
 Copy the worker URL: `https://solar-api-proxy.<account>.workers.dev`.
 

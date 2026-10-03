@@ -1,0 +1,5 @@
+# API proxy worker for the Solar System openData API.
+# Deploy: npx wrangler deploy   (or via the Cloudflare dashboard)
+name = "solar-api-proxy"
+main = "./proxy/worker.js"
+compatibility_date = "2026-10-03"
