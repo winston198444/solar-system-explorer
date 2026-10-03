@@ -8,29 +8,28 @@
         body { font-family: Arial, sans-serif; background: #0b0b1a; color: #fff; padding: 20px; margin: 0; }
         h1 { text-align: center; color: #d1d1f7; margin-bottom: 30px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: #1a1a2e; padding: 20px; border-radius: 12px; border: 1px solid #33334d; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .card { background: #1a1a2e; padding: 20px; border-radius: 12px; border: 1px solid #33334d; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); border-color: #555580; }
         .card h3 { color: #4da6ff; margin-top: 0; border-bottom: 1px solid #33334d; padding-bottom: 8px; }
-        .loading { text-align: center; color: #8888aa; grid-column: 1 / -1; padding: 40px; font-size: 1.2rem; }
+        .card p { margin: 8px 0; color: #d1d1e0; }
     </style>
 </head>
 <body>
 
     <h1>Catálogo del Sistema Solar</h1>
-    <div id="solar-container" class="grid">
-        <div class="loading">Cargando planetas...</div>
-    </div>
+    <div id="solar-container" class="grid"></div>
 
     <script>
-        // Datos oficiales estructurados para evitar bloqueos de red y CORS en GitHub Pages
+        // Datos completos y reales de los planetas del sistema solar
         const planetsData = [
-            { englishName: "Mercury", mass: { massValue: 3.3011, massExponent: 23 }, gravity: 3.7, moons: [] },
-            { englishName: "Venus", mass: { massValue: 4.8675, massExponent: 24 }, gravity: 8.87, moons: [] },
-            { englishName: "Earth", mass: { massValue: 5.9723, massExponent: 24 }, gravity: 9.81, moons: [{moon: "Moon"}] },
-            { englishName: "Mars", mass: { massValue: 6.4171, massExponent: 23 }, gravity: 3.71, moons: [{moon: "Phobos"}, {moon: "Deimos"}] },
-            { englishName: "Jupiter", mass: { massValue: 1.8982, massExponent: 27 }, gravity: 24.79, moons: [1,2,3,4] }, // Simplificado para conteo
-            { englishName: "Saturn", mass: { massValue: 5.6834, massExponent: 26 }, gravity: 10.44, moons: [1,2] },
-            { englishName: "Uranus", mass: { massValue: 8.6810, massExponent: 25 }, gravity: 8.69, moons: [1] },
-            { englishName: "Neptune", mass: { massValue: 1.0241, massExponent: 26 }, gravity: 11.15, moons: [1] }
+            { name: "Mercurio", englishName: "Mercury", mass: { value: 3.30, exponent: 23 }, gravity: 3.7, moonsCount: 0, density: 5.43 },
+            { name: "Venus", englishName: "Venus", mass: { value: 4.87, exponent: 24 }, gravity: 8.87, moonsCount: 0, density: 5.24 },
+            { name: "Tierra", englishName: "Earth", mass: { value: 5.97, exponent: 24 }, gravity: 9.81, moonsCount: 1, density: 5.52 },
+            { name: "Marte", englishName: "Mars", mass: { value: 6.42, exponent: 23 }, gravity: 3.71, moonsCount: 2, density: 3.93 },
+            { name: "Júpiter", englishName: "Jupiter", mass: { value: 1.89, exponent: 27 }, gravity: 24.79, moonsCount: 95, density: 1.33 },
+            { name: "Saturno", englishName: "Saturn", mass: { value: 5.68, exponent: 26 }, gravity: 10.44, moonsCount: 146, density: 0.69 },
+            { name: "Urano", englishName: "Uranus", mass: { value: 8.68, exponent: 25 }, gravity: 8.69, moonsCount: 28, density: 1.27 },
+            { name: "Neptuno", englishName: "Neptune", mass: { value: 1.02, exponent: 26 }, gravity: 11.15, moonsCount: 16, density: 1.64 }
         ];
 
         function renderPlanets() {
@@ -41,10 +40,11 @@
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <h3>${planet.englishName}</h3>
-                    <p><strong>Masa:</strong> ${planet.mass.massValue} x 10^${planet.mass.massExponent} kg</p>
+                    <h3>${planet.name} <span style="font-size: 0.8rem; color: #8888aa;">(${planet.englishName})</span></h3>
+                    <p><strong>Masa:</strong> ${planet.mass.value} × 10<sup>${planet.mass.exponent}</sup> kg</p>
                     <p><strong>Gravedad:</strong> ${planet.gravity} m/s²</p>
-                    <p><strong>Lunas:</strong> ${planet.moons.length}</p>
+                    <p><strong>Densidad:</strong> ${planet.density} g/cm³</p>
+                    <p><strong>Lunas conociadas:</strong> ${planet.moonsCount}</p>
                 `;
                 container.appendChild(card);
             });
