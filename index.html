@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo del Sistema Solar</title>
+    <title>Explorador Espacial - NASA</title>
     <style>
         body { 
             font-family: Arial, sans-serif; 
@@ -17,89 +17,73 @@
             margin-bottom: 30px;
             color: #d1d1f7;
         }
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-            gap: 20px; 
-            max-width: 1200px;
+        .container {
+            max-width: 800px;
             margin: 0 auto;
+            background: #1a1a2e;
+            border-radius: 12px;
+            border: 1px solid #33334d;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
-        .card { 
-            background: #1a1a2e; 
-            padding: 20px; 
-            border-radius: 12px; 
-            border: 1px solid #33334d; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
+        .container img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: #555580;
+        .content {
+            padding: 25px;
         }
-        .card h3 {
+        .content h2 {
             margin-top: 0;
             color: #4da6ff;
-            border-bottom: 1px solid #33334d;
-            padding-bottom: 8px;
         }
         .loading {
             text-align: center;
-            grid-column: 1 / -1;
             font-size: 1.2rem;
             color: #8888aa;
+            padding: 50px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Catálogo del Sistema Solar</h1>
-    <div id="solar-container" class="grid">
-        <div class="loading">Cargando datos espaciales...</div>
+    <h1>Imagen Astronómica del Día - NASA</h1>
+    <div id="nasa-container" class="container">
+        <div class="loading">Cargando datos de la NASA...</div>
     </div>
 
     <script>
-        // get planet data using proxy and personal token
-        async function fetchPlanets() {
+        async function fetchNasaData() {
             try {
-                // Enrutamos la petición a través de un proxy CORS público
-                const targetUrl = 'https://api.le-systeme-solaire.net/rest/bodies?filter[]=isPlanet,eq,true';
-                const proxyUrl = 'https://proxy.corsproxy.io/?url=' + encodeURIComponent(targetUrl);
-
-                const response = await fetch(proxyUrl, {
-                    headers: {
-                        'Authorization': 'Bearer a727fc44-4b90-47c6-8b3c-7a129c36b32a'
-                    }
-                });
+                // Usamos la API pública de la NASA con DEMO_KEY
+                const url = 'https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY';
                 
-                // check if the response failed
+                const response = await fetch(url);
+                
                 if (!response.ok) {
                     throw new Error('network response was not ok');
                 }
 
                 const data = await response.json();
-                const container = document.getElementById('solar-container');
-                container.innerHTML = '';
+                const container = document.getElementById('nasa-container');
 
-                // loop through each planet item
-                data.bodies.forEach(planet => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <h3>${planet.englishName}</h3>
-                        <p><strong>Masa:</strong> ${planet.mass ? planet.mass.massValue + ' x 10^' + planet.mass.massExponent + ' kg' : 'N/D'}</p>
-                        <p><strong>Gravedad:</strong> ${planet.gravity} m/s²</p>
-                        <p><strong>Lunas:</strong> ${planet.moons ? planet.moons.length : 0}</p>
-                    `;
-                    container.appendChild(card);
-                });
+                // Renderizamos la información obtenida
+                container.innerHTML = `
+                    ${data.media_type === 'image' ? `<img src="${data.url}" alt="${data.title}">` : `<iframe src="${data.url}" width="100%" height="450px" frameborder="0"></iframe>`}
+                    <div class="content">
+                        <h2>${data.title}</h2>
+                        <p><strong>Fecha:</strong> ${data.date}</p>
+                        <p>${data.explanation}</p>
+                    </div>
+                `;
             } catch (error) {
-                // log error and show message on screen
                 console.error('error loading data', error);
-                document.getElementById('solar-container').innerHTML = '<div class="loading" style="color: #ff6b6b;">No se pudieron cargar los datos espaciales.</div>';
+                document.getElementById('nasa-container').innerHTML = '<div class="loading" style="color: #ff6b6b;">No se pudieron cargar los datos de la NASA.</div>';
             }
         }
 
-        fetchPlanets();
+        fetchNasaData();
     </script>
 </body>
 </html>
