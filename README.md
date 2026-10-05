@@ -19,6 +19,8 @@ positions for any observer on Earth.
 - **Sky positions** — RA/Dec and Az/Alt for the Sun, Moon, planets
   and Pluto from any lat/lon/elevation/date, plus Julian day,
   J2000 and sidereal time.
+- **Languages** — English and Spanish, auto-detected from the
+  browser, switchable in the header.
 
 ## Data notes (API quirks handled by the app)
 
@@ -28,7 +30,7 @@ positions for any observer on Earth.
 | CORS preflight fails from browsers with the auth header | all requests go through the proxy |
 | `avgTemp` is in **Kelvin** | converted to °C for display |
 | Many fields use `0` / `""` for *unknown* | rendered as "—" (per-field allow-list of true zeros) |
-| Names are stored in French (`Pluton`, `La Terre`) | English name is primary, native name secondary |
+| Names are stored in French (`Pluton`, `La Terre`) | only the English name is displayed |
 | Negative `sideralRotation` | labelled *retrograde* |
 | Default pagination is 20/page | `fetchAllBodies()` requests the full list in one call (~500 KB) |
 | Ceres is classified as `Asteroid` although it is a dwarf planet | shown with its API type |
@@ -41,6 +43,7 @@ positions for any observer on Earth.
 ├── .env                        # SOLAR_API_KEY (git-ignored)
 ├── src/
 │   ├── config.ts               # API base URL / key (direct mode)
+│   ├── i18n/                   # en + es dictionaries, browser detection
 │   ├── lib/
 │   │   ├── api.ts              # typed fetch client + fetchAllBodies()
 │   │   ├── model.ts            # Body type, normalization helpers
@@ -65,11 +68,20 @@ https://api.le-systeme-solaire.net/generatekey.html.
 
 ## Deploy
 
-> **A proxy is mandatory.** The API requires the API key even on
-> CORS preflight (`OPTIONS`) requests, and browsers never send the
-> key during preflight — so the API **cannot be called directly
-> from a browser**. All traffic must go through a server-side proxy
-> that injects the key.
+> **A server-side proxy is mandatory — but you can choose
+> which one.** The API requires the key even on CORS preflight
+> (`OPTIONS`) requests, and browsers cannot send the key during
+> preflight — so the API **cannot be called directly from a
+> browser**. Any component that injects the key server-side
+> works:
+>
+> - **Cloudflare Worker** (`proxy/worker.js`) — the option this
+>   deployment uses (free tier, runs at the edge)
+> - **Express server** (`proxy/server.js`) — self-hosted
+>   alternative, included in the repo
+> - Any other serverless function (Netlify, Vercel, Deno
+>   Deploy…) or reverse proxy (nginx, Caddy, Apache) that adds
+>   the `Authorization` header
 
 ### 1. Deploy the proxy (Cloudflare Workers, free tier)
 
@@ -92,10 +104,11 @@ repo), set:
 
 - **Build command:** (leave empty — the worker needs no build)
 - **Deploy command:** `npx wrangler deploy`
-- **Secret:** Workers → solar-api-proxy → Settings → Variables
-  → Secrets → add `SOLAR_API_KEY` with your API key
+- **Secret:** Workers → solar-system-explorer → Settings →
+  Variables → Secrets → add `SOLAR_API_KEY` with your API key
 
-Copy the worker URL: `https://solar-api-proxy.<account>.workers.dev`.
+Copy the worker URL:
+`https://solar-system-explorer.<account>.workers.dev`.
 
 Alternative: self-host `proxy/server.js` (Express) on any VPS/container.
 
@@ -103,13 +116,17 @@ Alternative: self-host `proxy/server.js` (Express) on any VPS/container.
 
 1. Repo → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 2. Repo → **Settings → Secrets and variables → Actions → New repository
-   secret**: `VITE_API_BASE_URL` = your worker URL.
+   secret**: `VITE_API_BASE_URL` = your proxy URL.
 3. Push to `main`: `.github/workflows/deploy.yml` builds and
-   publishes `dist/` automatically.
+   publishes `dist/` automatically (the workflow also writes a
+   `CNAME` file into `dist/`).
 
-The site lives at `https://winston198444.github.io` (user site,
-asset base `/`). For a project site (`…/repo-name/`), set
-`base: '/repo-name/'` in `vite.config.ts`.
+**Custom domain (optional):** set the domain in repo →
+**Settings → Pages → Custom domain** and point DNS at GitHub
+(CNAME to `<user>.github.io` for a subdomain, or the four
+`185.199.108-111.153` A records for the apex). Assets use a
+relative base (`base: './'` in `vite.config.ts`), so the same
+build works at a domain root or under any path.
 
 Do **not** publish the repo root as-is — that serves the source
 `index.html` (which imports `/src/main.tsx` and 404s). GitHub
